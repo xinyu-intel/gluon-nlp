@@ -338,7 +338,7 @@ berttoken = nlp.data.BERTTokenizer(vocab=vocab, lower=lower)
 model_prefix = model_parameters
 network, args, auxs = mx.model.load_checkpoint(model_prefix, epochs)
 if not opt.gpu:
-    network = network.get_backend_symbol('MKLDNN_FC')
+    network = network.get_backend_symbol('MKLDNN')
 data_shape0 = (test_batch_size, 384)
 data_shape1 = (test_batch_size, 384)
 data_shape2 = (test_batch_size,)
@@ -624,7 +624,7 @@ def calibration():
 
     log.info('Start Calibration')
 
-    excluded_sym_names = []
+    excluded_sym_names = ['staticbertforqa0_dense0_fwd']
     calib_layer = lambda name: name.endswith('_output')
     qsym, qarg_params, aux_params = quantize_model(mod=mod, batch_size=test_batch_size,
                                                    ctx=ctx, excluded_sym_names=excluded_sym_names,
@@ -640,8 +640,7 @@ def calibration():
         raise ValueError('unknow calibration mode %s received, only supports `none`, `naive`, and `entropy`'
                          % calib_mode)
     sym_name = '%s-symbol.json' % (model_prefix + suffix)
-    # qsym = qsym.get_backend_symbol('MKLDNN_POST_QUANTIZE')
-    # qsym = qsym.get_backend_symbol('MKLDNN_POST_FC_QUANTIZE')
+    qsym = qsym.get_backend_symbol('MKLDNN_POST_QUANTIZE')
     save_symbol(sym_name, qsym, log)
     param_name = '%s-%04d.params' % (model_prefix + suffix, epochs)
     save_params(param_name, qarg_params, aux_params, log)
