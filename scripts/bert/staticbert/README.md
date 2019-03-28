@@ -1,0 +1,3 @@
+python static_finetune_squad.py --test_batch_size 32 --epochs 2  --export --only_predict --model_parameters output_dir/static_net --gpu 0
+python static_finetune_squad.py --test_batch_size 32 --epochs 2  --export --only_predict --model_parameters output_dir/static_net --gpu 0  --calibration --quantized-dtype=int8
+python static_finetune_squad.py --test_batch_size 32 --epochs 2  --export --only_predict --model_parameters output_dir/static_net-quantized-naive --gpu 0
