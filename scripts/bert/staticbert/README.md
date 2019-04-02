@@ -1,3 +1,5 @@
 python static_finetune_squad_sym.py --test_batch_size 32 --epochs 2  --export --only_predict --model_parameters output_dir/static_net
+
 python static_finetune_squad_sym.py --test_batch_size 32 --epochs 2  --export --only_predict --model_parameters output_dir/static_net  --calibration --quantized-dtype=auto
+
 python static_finetune_squad_sym.py --test_batch_size 32 --epochs 2  --export --only_predict --model_parameters output_dir/static_net-quantized-naive

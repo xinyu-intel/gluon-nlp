@@ -624,7 +624,80 @@ def calibration():
 
     log.info('Start Calibration')
 
-    excluded_sym_names = ['staticbertforqa0_dense0_fwd']
+    excluded_sym_names = [#'staticbertencoder0_transformer0_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer0_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer0_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer0_proj_fwd',
+                          #'staticbertencoder0_transformer0_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer0_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer1_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer1_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer1_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer1_proj_fwd',
+                          #'staticbertencoder0_transformer1_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer1_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer2_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer2_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer2_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer2_proj_fwd',
+                          #'staticbertencoder0_transformer2_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer2_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer3_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer3_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer3_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer3_proj_fwd',
+                          #'staticbertencoder0_transformer3_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer3_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer4_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer4_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer4_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer4_proj_fwd',
+                          #'staticbertencoder0_transformer4_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer4_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer5_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer5_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer5_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer5_proj_fwd',
+                          #'staticbertencoder0_transformer5_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer5_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer6_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer6_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer6_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer6_proj_fwd',
+                          #'staticbertencoder0_transformer6_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer6_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer7_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer7_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer7_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer7_proj_fwd',
+                          #'staticbertencoder0_transformer7_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer7_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer8_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer8_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer8_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer8_proj_fwd',
+                          #'staticbertencoder0_transformer8_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer8_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer9_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer9_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer9_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer9_proj_fwd',
+                          #'staticbertencoder0_transformer9_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer9_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer10_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer10_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer10_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer10_proj_fwd',
+                          #'staticbertencoder0_transformer10_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer10_bertpositionwiseffn0_ffn_2_fwd',
+                          #'staticbertencoder0_transformer11_multiheadattentioncell0_query_fwd',
+                          #'staticbertencoder0_transformer11_multiheadattentioncell0_key_fwd',
+                          #'staticbertencoder0_transformer11_multiheadattentioncell0_value_fwd',
+                          #'staticbertencoder0_transformer11_proj_fwd',
+                          #'staticbertencoder0_transformer11_bertpositionwiseffn0_ffn_1_fwd',
+                          'staticbertencoder0_transformer11_bertpositionwiseffn0_ffn_2_fwd',
+                          'staticbertforqa0_dense0_fwd']
+
     calib_layer = lambda name: name.endswith('_output')
     qsym, qarg_params, aux_params = quantize_model(mod=mod, batch_size=test_batch_size,
                                                    ctx=ctx, excluded_sym_names=excluded_sym_names,
@@ -636,11 +709,14 @@ def calibration():
         suffix = '-quantized-entropy'
     elif calib_mode == 'naive':
         suffix = '-quantized-naive'
+    elif calib_mode == 'none':
+        suffix = '-quantized-none'
     else:
         raise ValueError('unknow calibration mode %s received, only supports `none`, `naive`, and `entropy`'
                          % calib_mode)
     sym_name = '%s-symbol.json' % (model_prefix + suffix)
-    qsym = qsym.get_backend_symbol('MKLDNN_POST_QUANTIZE')
+    if ctx == mx.cpu():
+        qsym = qsym.get_backend_symbol('MKLDNN_POST_QUANTIZE')
     save_symbol(sym_name, qsym, log)
     param_name = '%s-%04d.params' % (model_prefix + suffix, epochs)
     save_params(param_name, qarg_params, aux_params, log)
