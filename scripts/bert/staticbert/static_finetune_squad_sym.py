@@ -698,7 +698,7 @@ def calibration():
                           'staticbertencoder0_transformer11_bertpositionwiseffn0_ffn_2_fwd',
                           'staticbertforqa0_dense0_fwd']
 
-    calib_layer = lambda name: name.endswith('_output')
+    calib_layer = lambda name: name.endswith('_output') or name.endswith('reshape10_0')
     qsym, qarg_params, aux_params = quantize_model(mod=mod, batch_size=test_batch_size,
                                                    ctx=ctx, excluded_sym_names=excluded_sym_names,
                                                    calib_mode=calib_mode, calib_data=dev_dataloader,
