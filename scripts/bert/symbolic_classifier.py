@@ -271,7 +271,7 @@ bert, vocabulary = get_bert_model(
 # logging.info(model)
 # model.hybridize(static_alloc=True)
 
-network, args, auxs = mx.model.load_checkpoint(model_parameters, epochs)
+network, args_, auxs = mx.model.load_checkpoint(model_parameters, epochs)
 data_shape0 = (dev_batch_size, max_len)
 data_shape1 = (dev_batch_size, max_len)
 data_shape2 = (dev_batch_size,)
@@ -281,7 +281,7 @@ if ctx == mx.cpu():
 mod = mx.mod.Module(symbol=network,  context=ctx, data_names=data_names, label_names=None)
 mod.bind(for_training=False,
             data_shapes=[('data0', data_shape0), ('data1', data_shape1), ('data2', data_shape2)])
-mod.set_params(args, auxs, allow_missing=False, force_init=True)
+mod.set_params(args_, auxs, allow_missing=False, force_init=True)
 loss_function = gluon.loss.SoftmaxCELoss()
 loss_function.hybridize(static_alloc=True)
 
@@ -469,7 +469,8 @@ def calibration(loader_dev, segment):
                                                    ctx=ctx, excluded_sym_names=excluded_sym_names,
                                                    calib_mode=calib_mode, calib_data=loader_dev,
                                                    num_calib_batch=num_calib_batches,
-                                                   calib_layer=calib_layer, quantized_dtype=quantized_dtype,
+                                                   calib_layer=calib_layer, 
+                                                   model='classification', quantized_dtype=quantized_dtype,
                                                    logger=logging)
     if calib_mode == 'entropy':
         suffix = '-quantized-entropy'

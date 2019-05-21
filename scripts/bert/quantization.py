@@ -205,18 +205,34 @@ def _calibrate_quantized_sym(qsym, th_dict):
     return Symbol(calibrated_sym)
 
 
-def _collect_layer_statistics(mod, data, collector, max_num_batch=None, ctx=cpu(), logger=None):
+def _collect_layer_statistics(mod, data, collector, max_num_batch=None, ctx=cpu(), model='classification', logger=None):
     num_batches = 0
-    for batch_id, seqs in enumerate(data):
-        input_ids, valid_len, type_ids, label = seqs
-        mod._exec_group.execs[0].set_monitor_callback(collector.collect, monitor_all=True)
-        batch = mx.io.DataBatch(data = (input_ids.astype('float32').as_in_context(ctx),
-                                        type_ids.astype('float32').as_in_context(ctx),
-                                        valid_len.astype('float32').as_in_context(ctx)))
-        mod.forward(batch, is_train=False)
-        num_batches += 1
-        if max_num_batch is not None and num_batches >= max_num_batch:
-            break
+    if model == 'classification':
+        for batch_id, seqs in enumerate(data):
+            input_ids, valid_len, type_ids, label = seqs
+            mod._exec_group.execs[0].set_monitor_callback(collector.collect, monitor_all=True)
+            batch = mx.io.DataBatch(data = (input_ids.astype('float32').as_in_context(ctx),
+                                            type_ids.astype('float32').as_in_context(ctx),
+                                            valid_len.astype('float32').as_in_context(ctx)))
+            mod.forward(batch, is_train=False)
+            num_batches += 1
+            if max_num_batch is not None and num_batches >= max_num_batch:
+                break
+    elif model == 'squad':
+        for data_ in data:
+            example_ids, inputs, token_types, valid_length, _, _ = data_
+            mod._exec_group.execs[0].set_monitor_callback(collector.collect, monitor_all=True)
+            batch = mx.io.DataBatch(data = (inputs.astype('float32').as_in_context(ctx),
+                                            token_types.astype('float32').as_in_context(ctx),
+                                            valid_length.astype('float32').as_in_context(ctx)))
+            mod.forward(batch, is_train=False)
+            num_batches += 1
+            if max_num_batch is not None and num_batches >= max_num_batch:
+                break
+    else:
+        raise ValueError('unknow bert model %s received, only supports `classification`, `squad`'
+                         % model)
+
     if logger is not None:
         logger.info("Collected statistics from %d batches"
                     % num_batches)
@@ -224,19 +240,19 @@ def _collect_layer_statistics(mod, data, collector, max_num_batch=None, ctx=cpu(
 
 
 def _collect_layer_output_min_max(mod, data, include_layer=None,
-                                  max_num_batch=None, ctx=cpu(), logger=None):
+                                  max_num_batch=None, ctx=cpu(), model='classification', logger=None):
     """Collect min and max values from layer outputs and save them in
     a dictionary mapped by layer names.
     """
     collector = _LayerOutputMinMaxCollector(include_layer=include_layer, logger=logger)
-    num_batches = _collect_layer_statistics(mod, data, collector, max_num_batch, ctx, logger)
+    num_batches = _collect_layer_statistics(mod, data, collector, max_num_batch, ctx, model, logger)
     return collector.min_max_dict, num_batches
 
 
-def _collect_layer_outputs(mod, data, include_layer=None, max_num_batch=None, ctx=cpu(), logger=None):
+def _collect_layer_outputs(mod, data, include_layer=None, max_num_batch=None, model='classification', ctx=cpu(), logger=None):
     """Collect layer outputs and save them in a dictionary mapped by layer names."""
     collector = _LayerOutputCollector(include_layer=include_layer, logger=logger)
-    num_batches = _collect_layer_statistics(mod, data, collector, max_num_batch, ctx, logger)
+    num_batches = _collect_layer_statistics(mod, data, collector, max_num_batch, ctx, model, logger)
     return collector.nd_dict, num_batches
 
 
@@ -421,7 +437,7 @@ def _load_params(params, logger=logging):
 def quantize_model(mod, batch_size,
                    ctx=cpu(), excluded_sym_names=None, calib_mode='entropy',
                    calib_data=None, num_calib_batch=None, calib_layer=None,
-                   quantized_dtype='int8', logger=logging):
+                   model='classification', quantized_dtype='int8', logger=logging):
     """User-level API for generating a quantized model from a FP32 model w/ or w/o calibration.
     The backend quantized operators are only enabled for Linux systems. Please do not run
     inference using the quantized models on Windows for now.
@@ -508,14 +524,14 @@ def quantize_model(mod, batch_size,
             nd_dict, num_batches = _collect_layer_outputs(mod, calib_data,
                                                            include_layer=calib_layer,
                                                            max_num_batch=num_calib_batch,
-                                                           ctx=ctx, logger=logger)
+                                                           ctx=ctx, model=model, logger=logger)
             logger.info('Collected layer outputs from FP32 model using %d batches' % num_batches)
             logger.info('Calculating optimal thresholds for quantization')
             th_dict = _get_optimal_thresholds(nd_dict, logger=logger)
         elif calib_mode == 'naive':
             th_dict, num_batches = _collect_layer_output_min_max(
                 mod, calib_data, include_layer=calib_layer, max_num_batch=num_calib_batch,
-                ctx=ctx, logger=logger)
+                ctx=ctx, model=model, logger=logger)
             logger.info('Collected layer output min/max values from FP32 model using %d batches'
                         % num_batches)
         else:
