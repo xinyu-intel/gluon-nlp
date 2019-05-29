@@ -103,8 +103,7 @@ def test_sentiment_analysis_finetune(use_pretrained):
 def test_sentiment_analysis_textcnn():
     process = subprocess.check_call([sys.executable, './scripts/sentiment_analysis/sentiment_analysis_cnn.py',
                                      '--gpu', '0', '--batch_size', '50', '--epochs', '1',
-                                     '--dropout', '0.5', '--lr', '0.0001', '--model_mode', 'rand',
-                                     '--data_name', 'MR', '--save-prefix', 'sa-model'])
+                                     '--dropout', '0.5', '--model_mode', 'rand', '--data_name', 'MR'])
     time.sleep(5)
 
 @pytest.mark.skip_master
@@ -290,7 +289,7 @@ def test_pretrain_hvd():
 @pytest.mark.integration
 # MNLI inference (multiple dev sets)
 # STS-B inference (regression task)
-@pytest.mark.parametrize('dataset', ['MNLI', 'STS-B'])
+@pytest.mark.parametrize('dataset', ['MNLI', 'STS-B', 'XNLI'])
 def test_finetune_inference(dataset):
     arguments = ['--log_interval', '100', '--epsilon', '1e-8', '--optimizer',
                  'adam', '--gpu', '0', '--max_len', '80', '--only_inference']
